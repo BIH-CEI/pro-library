@@ -1,0 +1,81 @@
+name: Build IG
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  sushi:
+    name: SUSHI compile FSH → FHIR JSON
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SUSHI
+        run: npm install -g fsh-sushi
+
+      - name: SUSHI version
+        run: sushi --version
+
+      - name: Run SUSHI
+        run: sushi .
+
+      - name: Upload fsh-generated artefacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fsh-generated
+          path: fsh-generated/
+          if-no-files-found: error
+
+  ig-publisher:
+    name: Build IG website
+    needs: sushi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SUSHI
+        run: npm install -g fsh-sushi
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run SUSHI (needed before IG Publisher)
+        run: sushi .
+
+      - name: Download IG Publisher
+        run: |
+          mkdir -p input-cache
+          curl -sfL https://github.com/HL7/fhir-ig-publisher/releases/latest/download/publisher.jar \
+               -o input-cache/publisher.jar
+
+      - name: Run IG Publisher
+        run: java -jar input-cache/publisher.jar -ig . -no-sushi
+        continue-on-error: true   # IG Publisher warnings are expected on 0.x line
+
+      - name: Upload IG output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ig-output
+          path: output/
+          if-no-files-found: warn

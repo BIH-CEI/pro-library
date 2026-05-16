@@ -1,0 +1,101 @@
+name: Release FHIR Package
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to package (e.g., 0.1.0)'
+        required: true
+        default: '0.1.0'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  package:
+    name: Build + publish FHIR Package tarball
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing PRO Library v$VERSION"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install SUSHI
+        run: npm install -g fsh-sushi
+
+      - name: Run SUSHI
+        run: sushi .
+
+      - name: Assemble FHIR Package tarball
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PKG_DIR="bih-cei.fhir.pro-library-${VERSION}"
+          mkdir -p "${PKG_DIR}/package"
+          cp fsh-generated/resources/*.json "${PKG_DIR}/package/"
+          # Synthesise minimal package.json per FHIR Package spec
+          cat > "${PKG_DIR}/package/package.json" <<EOF
+          {
+            "name": "bih-cei.fhir.pro-library",
+            "version": "${VERSION}",
+            "canonical": "https://fhir.bih-charite.de/pro-library",
+            "title": "PRO Library",
+            "description": "Curated reference source of FHIR-encoded PROM Questionnaires.",
+            "fhirVersions": ["4.0.1"],
+            "dependencies": {
+              "hl7.fhir.r4.core": "4.0.1",
+              "hl7.fhir.uv.sdc": "3.0.0",
+              "de.medizininformatikinitiative.kerndatensatz.pros": "2026.3.0"
+            }
+          }
+          EOF
+          tar czf "${PKG_DIR}.tgz" -C "${PKG_DIR}" .
+          sha256sum "${PKG_DIR}.tgz" | tee "${PKG_DIR}.tgz.sha256"
+          ls -la "${PKG_DIR}.tgz" "${PKG_DIR}.tgz.sha256"
+
+      - name: Create GitHub Release with tarball
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bih-cei.fhir.pro-library-*.tgz
+            bih-cei.fhir.pro-library-*.tgz.sha256
+          body: |
+            PRO Library v${{ steps.version.outputs.version }} — FHIR Package release.
+
+            **Status: provisional 0.x line.** Namespace `https://fhir.bih-charite.de/pro-library` is provisional under BIH-CEI stewardship — see [ARTIFACT_METADATA_POLICY.md](https://github.com/BIH-CEI/fhir-sdc-questionnaire-service/blob/master/ARTIFACT_METADATA_POLICY.md) §2 for migration plan if normative authority moves elsewhere.
+
+            ## Consume
+
+            ```bash
+            curl -sLO https://github.com/BIH-CEI/pro-library/releases/download/${{ github.ref_name }}/bih-cei.fhir.pro-library-${{ steps.version.outputs.version }}.tgz
+            sha256sum -c bih-cei.fhir.pro-library-${{ steps.version.outputs.version }}.tgz.sha256
+            ```
+
+            Or via the form-manager runtime container (loads this package alongside MII PRO automatically).
+
+      - name: Upload as workflow artifact (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fhir-package-${{ steps.version.outputs.version }}
+          path: |
+            bih-cei.fhir.pro-library-*.tgz
+            bih-cei.fhir.pro-library-*.tgz.sha256

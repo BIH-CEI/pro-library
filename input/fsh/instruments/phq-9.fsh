@@ -1,6 +1,6 @@
 // PHQ-9 — Patient Health Questionnaire-9
 //
-// PRO Library 0.1.0 — derivedFrom MII PRO 2026.3.0
+// PRO Library 0.1.1 — derivedFrom MII PRO 2026.3.0
 //
 // First demonstration instrument for the 0.x line. Faithful overlay on
 // upstream MII PRO mii-qst-pro-phq-9 v2026.3.0:
@@ -40,7 +40,7 @@ Description: "PRO Library 0.1.0 — Patient Health Questionnaire-9 (PHQ-9), deri
 
 * id = "phq-9"
 * url = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9"
-* version = "0.1.0"
+* version = "0.1.1"
 * derivedFrom = "https://www.medizininformatik-initiative.de/fhir/ext/modul-pro/Questionnaire/mii-qst-pro-phq-9|2026.3.0"
 * title = "Patient Health Questionnaire-9 (PHQ-9)"
 * name = "PHQ9"
@@ -62,16 +62,26 @@ PHQ-9 is freely available for clinical and research use; attribution required.
 * identifier[+].system = "https://fhir.bih-charite.de/pro-library/identifier"
 * identifier[=].value = "phq-9"
 
-// CRMI tier claims — Shareable + Computable for 0.1.0.
-// Publishable deferred to 0.2.0 (would require contact, approvalDate,
-// effectivePeriod from a formalised editorial process).
-// Executable deferred to 0.3.0+ (requires CQL scoring Library, populate/extract bindings).
+// CRMI tier claims — Shareable + Computable + Executable for 0.1.1.
+// (Bumped to executable since 0.1.1 binds the CQL Library that makes
+// scoring runnable via Library/$evaluate and $extract.)
+// Publishable deferred to 0.2.0+ (requires formalised editorial process
+// metadata: contact, approvalDate, effectivePeriod).
 * extension[+].url = $cqf-knowledgeCapability
 * extension[=].valueCode = #shareable
 * extension[+].url = $cqf-knowledgeCapability
 * extension[=].valueCode = #computable
+* extension[+].url = $cqf-knowledgeCapability
+* extension[=].valueCode = #executable
 * extension[+].url = $cqf-knowledgeRepresentationLevel
-* extension[=].valueCode = #structured
+* extension[=].valueCode = #executable
+
+// Bind the scoring CQL Library. Score items below reference its functions
+// via sdc-calculatedExpression with language=text/cql-identifier.
+// Pure CQL by policy — no FHIRPath fallback. Renderers must support CQL to
+// claim the MII PRO `calculatable` capability against this Questionnaire.
+* extension[+].url = $cqf-library
+* extension[=].valueCanonical = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring|0.1.1"
 
 * code = $LOINC#44249-1 "PHQ-9 quick depression assessment panel [Reported.PHQ]"
 
@@ -141,16 +151,26 @@ PHQ-9 is freely available for clinical and research use; attribution required.
   * text = "Thoughts that you would be better off dead or of hurting yourself in some way"
   * insert PhqFreqOptions
 
-// Item 11: PHQ-9 total sum-score (decimal). Computed via SDC calculatedExpression
-// (sum of ordinal values from Q1-Q9). The expression is left as upstream-MII-PRO
-// for now; see TODO below for the explicit FHIRPath translation work.
+// Item 11: PHQ-9 total sum-score (decimal). Computed via CQL function
+// PHQ9.PHQ9TotalScore in the bound scoring Library. LOINC item.code allows
+// $extract to produce an Observation that conforms (by matching .code) to
+// the MII PRO ObservationDefinition mii-obsdef-pro-score-phq-9.
 * item[+]
   * linkId = "phq-phq9-score-total"
   * type = #decimal
   * text = "PHQ-9 Total Score"
   * readOnly = true
-  // TODO(0.2.0): port the upstream calculatedExpression FHIRPath verbatim and
-  // add a unit test (CQL Library will follow in 0.3.0).
+  * code = $LOINC#44261-6 "Patient Health Questionnaire 9 item (PHQ-9) total score [Reported]"
+  * extension[+].url = $sdc-calculatedExpression
+  * extension[=].valueExpression.name = "phq9-total-score"
+  * extension[=].valueExpression.language = #text/cql-identifier
+  * extension[=].valueExpression.expression = "PHQ9TotalScore"
+  * extension[+].url = $observation-extract
+  * extension[=].valueBoolean = true
+  * extension[+].url = $sdc-observation-extract-category
+  * extension[=].valueCodeableConcept = $observation-category#survey
+  * extension[+].url = $questionnaire-unit
+  * extension[=].valueCoding = $ucum#{score}
 
 // Item 12: Functional impact — different 4-point scale
 * item[+]
@@ -159,10 +179,23 @@ PHQ-9 is freely available for clinical and research use; attribution required.
   * text = "If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?"
   * insert PhqDifficultyOptions
 
-// Item 13: PROMIS Depression T-Score derivation. Decimal, read-only.
-// TODO(0.2.0): port the upstream PROMIS-conversion table reference.
+// Item 13: PROMIS Depression T-Score derivation via CQL function
+// PHQ9.PROMISDepressionTScore (PROsetta Stone cross-walk). LOINC item.code
+// 77861-3 matches MII PRO ObservationDefinition mii-obsdef-pro-depression-t-score
+// so $extract produces a conforming Observation.
 * item[+]
   * linkId = "phq-phq9-promis-tscore"
   * type = #decimal
   * text = "PROMIS Depression T-Score (derived from PHQ-9)"
   * readOnly = true
+  * code = $LOINC#77861-3 "PROMIS emotional distress - depression - version 1.0 Tscore"
+  * extension[+].url = $sdc-calculatedExpression
+  * extension[=].valueExpression.name = "promis-depression-tscore"
+  * extension[=].valueExpression.language = #text/cql-identifier
+  * extension[=].valueExpression.expression = "PROMISDepressionTScore"
+  * extension[+].url = $observation-extract
+  * extension[=].valueBoolean = true
+  * extension[+].url = $sdc-observation-extract-category
+  * extension[=].valueCodeableConcept = $observation-category#survey
+  * extension[+].url = $questionnaire-unit
+  * extension[=].valueCoding = $ucum#{score}

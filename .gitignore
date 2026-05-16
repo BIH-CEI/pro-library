@@ -20,3 +20,7 @@
 
 # FHIR Validator cache
 .fhir/
+
+# Tarball build outputs (recreated from input/ on every release)
+/bih-cei.fhir.pro-library-*.tgz
+/bih-cei.fhir.pro-library-*/

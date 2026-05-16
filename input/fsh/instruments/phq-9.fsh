@@ -44,8 +44,13 @@ Description: "PRO Library 0.1.0 — Patient Health Questionnaire-9 (PHQ-9), deri
 * derivedFrom = "https://www.medizininformatik-initiative.de/fhir/ext/modul-pro/Questionnaire/mii-qst-pro-phq-9|2026.3.0"
 * title = "Patient Health Questionnaire-9 (PHQ-9)"
 * name = "PHQ9"
-* status = #draft
-* experimental = false
+// status=active per FHIR semantics: PHQ-9 itself is a stable validated
+// instrument (Kroenke 2001). The 0.x instability is at the library/
+// manifest framing level — captured via experimental=true + version <1.0.0.
+// (status=draft would be rejected by HAPI's PackageInstallerSvc on auto-install
+// anyway, mirroring the SDC IG issue.)
+* status = #active
+* experimental = true
 * date = "2026-05-16"
 * publisher = "BIH-CEI (provisional steward)"
 * description = "Patient Health Questionnaire (PHQ-9). Nine-item depression screening instrument with an additional functional impact item."

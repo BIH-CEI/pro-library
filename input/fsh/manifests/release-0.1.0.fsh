@@ -21,8 +21,9 @@ Description: "PRO Library Release 0.1.0 — first end-to-end demonstration relea
 * version = "0.1.0"
 * name = "PROLibraryRelease010"
 * title = "PRO Library Release 0.1.0"
-* status = #draft
-* experimental = false
+// status=active for HAPI auto-install compatibility; 0.x instability flagged via experimental=true + version
+* status = #active
+* experimental = true
 * date = "2026-05-16"
 * publisher = "BIH-CEI (provisional steward)"
 * type = $library-type#asset-collection "Asset Collection"

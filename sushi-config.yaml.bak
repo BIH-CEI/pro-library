@@ -21,7 +21,7 @@ description: |
   including the explicit authority-gap statement (§1a) — this work builds
   the technical infrastructure a future normative authority would need.
 
-version: 0.1.2
+version: 0.1.1
 status: draft   # 0.x = pre-stable, expect breaking changes
 fhirVersion: 4.0.1
 copyrightYear: 2026+

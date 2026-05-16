@@ -1,14 +1,16 @@
 // CQL library identifier matches the FHIR Library resource id so that
 // HAPI CR's Library/{id}/$evaluate URL-based resolver can find this source.
-library "phq-9-scoring" version '0.1.1'
+library "phq-9-scoring" version '0.1.2'
 
 /*
  * PHQ-9 scoring + PROMIS Depression T-Score derivation.
  *
- * Ported from the FHIRPath calculatedExpression in MII PRO
- * mii-qst-pro-phq-9 (de.medizininformatikinitiative.kerndatensatz.pros#2026.3.0)
- * for: (a) explicit machine-readable scoring spec, (b) authoritative
- * server-side computation via Library/$evaluate, (c) testable, citable.
+ * 0.1.2 — SDC Flow A redesign.
+ * Switched from `parameter "Response" QuestionnaireResponse` (Flow B — direct
+ * Library/$evaluate testing) to `context Patient` + retrieve from server data.
+ * The retrieve pattern is what HAPI CR's SDC-style $populate / $extract /
+ * sdc-calculatedExpression evaluation flow expects, and it works around the
+ * library-parameter-passing bug we hit in 0.1.1.
  *
  * Original instrument: Kroenke K, Spitzer RL, Williams JBW. The PHQ-9.
  *   J Gen Intern Med 2001;16(9):606-13. doi:10.1046/j.1525-1497.2001.016009606.x
@@ -22,13 +24,23 @@ using FHIR version '4.0.1'
 
 include FHIRHelpers version '4.0.1'
 
-// QuestionnaireResponse passed as a $evaluate parameter. No context block —
-// scoring is purely on the response payload, no Patient dependency.
-parameter "Response" QuestionnaireResponse
+context Patient
+
+// Most-recent completed PHQ-9 response for the context Patient.
+// Filter strategy: use .startsWith on the canonical's string value to be
+// version-agnostic (matches 'phq-9|0.1.0', 'phq-9|0.1.1', 'phq-9|0.1.2', etc.).
+// The `~` canonical-equivalence operator in CQL is finicky for partial matches.
+define "PHQ9QuestionnaireUrl":
+  'https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9'
+
+define "MostRecentResponse":
+  First(
+    ([QuestionnaireResponse]) R
+      where R.questionnaire.value.startsWith(PHQ9QuestionnaireUrl)
+      sort by authored desc
+  )
 
 // LinkIds of the 9 PHQ items we score (Q10 functional-impact excluded).
-// Defined separately because CQL's `in` operator does not accept inline
-// list literals directly inside where-clauses.
 define "ScoredLinkIds":
   { 'phq-phq9-q01', 'phq-phq9-q02', 'phq-phq9-q03',
     'phq-phq9-q04', 'phq-phq9-q05', 'phq-phq9-q06',
@@ -49,19 +61,16 @@ define function "OrdinalForCode"(code String):
   end
 
 // Sum of ordinal values across the 9 scored items → 0..27.
-//
-// Grammar note (cql.hl7.org/08-a-cqlsyntax.html): query clauses MUST appear
-// in the order  source → let → where → return.  We inline the Coding
-// extraction inside `return` so we don't need a let clause; the explicit
-// parens around `(First(I.answer).value) as FHIR.Coding` are required
-// because `as` binds tighter than `.code`.
-// FHIRHelpers (auto-included) coerces FHIR.string I.linkId → System.String
-// for the `in` membership comparison against the list of System.Strings.
+// Returns null if no response is found for the patient.
+// CQL `return` clause defaults to DISTINCT — without `return all`, identical
+// ordinals (e.g. 9× LA6571-9 → 9× 3) collapse to a single value [3] and
+// Sum returns 3 instead of 27. The `all` modifier preserves duplicates.
+// (Cost us an hour. Now captured in the cql-development skill.)
 define "PHQ9TotalScore":
   Sum(
-    ( Response.item ) I
+    ( MostRecentResponse.item ) I
       where I.linkId in "ScoredLinkIds"
-      return OrdinalForCode(
+      return all OrdinalForCode(
         ((First(I.answer).value) as FHIR.Coding).code.value
       )
   )

@@ -1,4 +1,4 @@
-// PRO Library Release 0.1.1 Manifest
+// PRO Library Release 0.1.2 Manifest
 //
 // Adds to 0.1.0:
 //   - CQL scoring Library for PHQ-9 (raw + severity band + PROMIS T-Score)
@@ -10,16 +10,16 @@
 //   - 10 should-pass test response fixtures (min/max + every band boundary)
 //   - TestScript exercising Library/$evaluate against each fixture
 
-Instance: release-0-1-1
+Instance: release-0-1-2
 InstanceOf: Library
 Usage: #definition
-Description: "PRO Library Release 0.1.1 — adds CQL scoring + PROMIS T-Score derivation + boundary test fixtures."
+Description: "PRO Library Release 0.1.2 — adds CQL scoring + PROMIS T-Score derivation + boundary test fixtures."
 
-* id = "release-0-1-1"
-* url = "https://fhir.bih-charite.de/pro-library/Library/release-0-1-1"
-* version = "0.1.1"
-* name = "PROLibraryRelease011"
-* title = "PRO Library Release 0.1.1"
+* id = "release-0-1-2"
+* url = "https://fhir.bih-charite.de/pro-library/Library/release-0-1-2"
+* version = "0.1.2"
+* name = "PROLibraryRelease012"
+* title = "PRO Library Release 0.1.2"
 * status = #active
 * experimental = true
 * date = "2026-05-16"
@@ -33,13 +33,13 @@ Description: "PRO Library Release 0.1.1 — adds CQL scoring + PROMIS T-Score de
 * extension[=].valueCode = #structured
 
 * relatedArtifact[+].type = #depends-on
-* relatedArtifact[=].display = "PHQ-9 Questionnaire v0.1.1 (with CQL scoring bindings)"
-* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9|0.1.1"
+* relatedArtifact[=].display = "PHQ-9 Questionnaire v0.1.2 (with CQL scoring bindings)"
+* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9|0.1.2"
 
 * relatedArtifact[+].type = #depends-on
-* relatedArtifact[=].display = "PHQ-9 Scoring CQL Library v0.1.1"
-* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring|0.1.1"
+* relatedArtifact[=].display = "PHQ-9 Scoring CQL Library v0.1.2"
+* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring|0.1.2"
 
 * relatedArtifact[+].type = #depends-on
-* relatedArtifact[=].display = "PHQ-9 Scoring TestScript v0.1.1"
-* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/TestScript/phq-9-scoring-test|0.1.1"
+* relatedArtifact[=].display = "PHQ-9 Scoring TestScript v0.1.2"
+* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/TestScript/phq-9-scoring-test|0.1.2"

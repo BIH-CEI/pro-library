@@ -1,0 +1,57 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "id": "phq-9-response-mild",
+  "questionnaire": "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9|0.1.0",
+  "status": "completed",
+  "subject": {
+    "display": "Test patient (anonymous)"
+  },
+  "authored": "2026-05-16T10:30:00Z",
+  "item": [
+    {
+      "linkId": "phq-phq9-q01",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6569-3", "display": "Several days"}}]
+    },
+    {
+      "linkId": "phq-phq9-q02",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6569-3", "display": "Several days"}}]
+    },
+    {
+      "linkId": "phq-phq9-q03",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6568-5", "display": "Not at all"}}]
+    },
+    {
+      "linkId": "phq-phq9-q04",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6569-3", "display": "Several days"}}]
+    },
+    {
+      "linkId": "phq-phq9-q05",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6568-5", "display": "Not at all"}}]
+    },
+    {
+      "linkId": "phq-phq9-q06",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6568-5", "display": "Not at all"}}]
+    },
+    {
+      "linkId": "phq-phq9-q07",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6569-3", "display": "Several days"}}]
+    },
+    {
+      "linkId": "phq-phq9-q08",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6568-5", "display": "Not at all"}}]
+    },
+    {
+      "linkId": "phq-phq9-q09",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6568-5", "display": "Not at all"}}]
+    },
+    {
+      "linkId": "phq-phq9-score-total",
+      "answer": [{"valueDecimal": 5}]
+    },
+    {
+      "linkId": "phq-phq9-q10",
+      "answer": [{"valueCoding": {"system": "http://loinc.org", "code": "LA6573-5", "display": "Somewhat difficult"}}]
+    }
+  ],
+  "_comment_purpose": "should-pass test response — mild depression (sum-score 5, reference: Kroenke 2001 cut-points 5-9 = mild)"
+}

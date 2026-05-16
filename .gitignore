@@ -1,0 +1,22 @@
+# SUSHI / IG Publisher generated output
+/fsh-generated/
+/output/
+/template/
+/temp/
+/input-cache/
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local Claude config (per-developer)
+.claude/
+
+# FHIR Validator cache
+.fhir/

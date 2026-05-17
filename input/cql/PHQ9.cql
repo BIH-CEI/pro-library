@@ -1,6 +1,6 @@
 // CQL library identifier matches the FHIR Library resource id so that
 // HAPI CR's Library/{id}/$evaluate URL-based resolver can find this source.
-library "phq-9-scoring" version '0.1.2'
+library "phq-9-scoring" version '0.1.3'
 
 /*
  * PHQ-9 scoring + PROMIS Depression T-Score derivation.

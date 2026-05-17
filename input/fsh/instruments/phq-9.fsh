@@ -1,6 +1,6 @@
 // PHQ-9 — Patient Health Questionnaire-9
 //
-// PRO Library 0.1.2 — derivedFrom MII PRO 2026.3.0
+// PRO Library 0.1.3 — derivedFrom MII PRO 2026.3.0
 //
 // First demonstration instrument for the 0.x line. Faithful overlay on
 // upstream MII PRO mii-qst-pro-phq-9 v2026.3.0:
@@ -40,7 +40,7 @@ Description: "PRO Library 0.1.0 — Patient Health Questionnaire-9 (PHQ-9), deri
 
 * id = "phq-9"
 * url = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9"
-* version = "0.1.2"
+* version = "0.1.3"
 * derivedFrom = "https://www.medizininformatik-initiative.de/fhir/ext/modul-pro/Questionnaire/mii-qst-pro-phq-9|2026.3.0"
 * title = "Patient Health Questionnaire-9 (PHQ-9)"
 * name = "PHQ9"
@@ -81,7 +81,7 @@ PHQ-9 is freely available for clinical and research use; attribution required.
 // Pure CQL by policy — no FHIRPath fallback. Renderers must support CQL to
 // claim the MII PRO `calculatable` capability against this Questionnaire.
 * extension[+].url = $cqf-library
-* extension[=].valueCanonical = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring|0.1.2"
+* extension[=].valueCanonical = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring|0.1.3"
 
 * code = $LOINC#44249-1 "PHQ-9 quick depression assessment panel [Reported.PHQ]"
 

@@ -16,7 +16,7 @@ Description: "CQL scoring library for PHQ-9 (SDC Flow A: context Patient + retri
 
 * id = "phq-9-scoring"
 * url = "https://fhir.bih-charite.de/pro-library/Library/phq-9-scoring"
-* version = "0.1.2"
+* version = "0.1.3"
 * name = "phq-9-scoring"
 * title = "PHQ-9 Scoring Library"
 * status = #active
@@ -26,7 +26,7 @@ Description: "CQL scoring library for PHQ-9 (SDC Flow A: context Patient + retri
 * type = $library-type#logic-library "Logic Library"
 
 * relatedArtifact[+].type = #depends-on
-* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9|0.1.2"
+* relatedArtifact[=].resource = "https://fhir.bih-charite.de/pro-library/Questionnaire/phq-9|0.1.3"
 * relatedArtifact[=].display = "PHQ-9 Questionnaire scored by this Library"
 
 * relatedArtifact[+].type = #citation

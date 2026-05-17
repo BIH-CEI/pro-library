@@ -34,10 +34,18 @@ Description: "ObservationDefinition for the PROMIS Depression T-score with clini
 
 * id = "cei-obsdef-promis-depression-tscore"
 
-* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-citation"
-* extension[=].valueString = "PROMIS Health Measures Score Cut Points: HealthMeasures.net interpretation guidance for PROMIS higher-symptom-better-score domains (within-normal-limits / mild / moderate / severe at T 55, 60, 70)."
-* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-citation"
-* extension[=].valueString = "Derived from MII PRO mii-obsdef-pro-depression-t-score (2026.3.0); adds clinical interpretation bands. Population reference ranges from MII PRO upstream retained — see EHIS wave 3 (Riazy et al., JAMA Netw Open 2025;8(6):e2517394)."
+// Provenance via cqf-relatedArtifact (element-agnostic, structured citation
+// + derivation). cqf-citation is constrained to Attachment elements in its
+// StructureDefinition and cannot live on an ObservationDefinition root.
+* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-relatedArtifact"
+* extension[=].valueRelatedArtifact.type = #citation
+* extension[=].valueRelatedArtifact.label = "PROMIS Health Measures — Score Cut Points"
+* extension[=].valueRelatedArtifact.citation = "PROMIS Health Measures Score Cut Points: HealthMeasures.net interpretation guidance for PROMIS higher-symptom-better-score domains (within-normal-limits / mild / moderate / severe at T 55, 60, 70)."
+
+* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-relatedArtifact"
+* extension[=].valueRelatedArtifact.type = #derived-from
+* extension[=].valueRelatedArtifact.label = "MII PRO upstream OD (clinical severity bands added downstream)"
+* extension[=].valueRelatedArtifact.display = "Derived from MII PRO mii-obsdef-pro-depression-t-score (2026.3.0); adds clinical interpretation bands. Population reference ranges from MII PRO upstream retained — see EHIS wave 3 (Riazy et al., JAMA Netw Open 2025;8(6):e2517394)."
 
 * category[+].coding[+] = $observation-category#survey
 

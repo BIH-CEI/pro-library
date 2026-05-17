@@ -86,15 +86,19 @@ PHQ-9 is freely available for clinical and research use; attribution required.
 * code = $LOINC#44249-1 "PHQ-9 quick depression assessment panel [Reported.PHQ]"
 
 // Item 1: Display — recall period instruction
+// Translation extension lives on `text` (a primitive) — emitted as
+// `_text.extension[]` in JSON. The translation extension SD allows only
+// e:string / e:code / e:markdown — attaching to the `item` BackboneElement
+// directly is non-conformant (HAPI validator rejects).
 * item[+]
   * linkId = "PHQ-9.Description"
   * type = #display
   * text = "Over the last two weeks, how often have you been bothered by any of the following problems?"
-  * extension[0].url = $translation
-  * extension[0].extension[0].url = "lang"
-  * extension[0].extension[0].valueCode = #de
-  * extension[0].extension[1].url = "content"
-  * extension[0].extension[1].valueString = "Wie oft fühlten Sie sich im Verlauf der letzten 2 Wochen durch die folgenden Beschwerden beeinträchtigt?"
+  * text.extension[+].url = $translation
+  * text.extension[=].extension[+].url = "lang"
+  * text.extension[=].extension[=].valueCode = #de
+  * text.extension[=].extension[+].url = "content"
+  * text.extension[=].extension[=].valueString = "Wie oft fühlten Sie sich im Verlauf der letzten 2 Wochen durch die folgenden Beschwerden beeinträchtigt?"
 
 // Items 2-10: PHQ-9 questions Q1-Q9 with shared 4-point frequency scale
 * item[+]

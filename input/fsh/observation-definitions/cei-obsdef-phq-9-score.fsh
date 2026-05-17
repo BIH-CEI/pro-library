@@ -37,10 +37,18 @@ Description: "ObservationDefinition for PHQ-9 total score with Kroenke 2001 seve
 
 * id = "cei-obsdef-phq-9-score"
 
-* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-citation"
-* extension[=].valueString = "Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med 2001;16(9):606-13. doi:10.1046/j.1525-1497.2001.016009606.x"
-* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-citation"
-* extension[=].valueString = "Derived from MII PRO mii-obsdef-pro-score-phq-9 (2026.3.0); adds clinical severity bands not present upstream."
+// Provenance via cqf-relatedArtifact (element-agnostic, structured citation
+// + derivation). cqf-citation is constrained to Attachment elements in its
+// StructureDefinition and cannot live on an ObservationDefinition root.
+* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-relatedArtifact"
+* extension[=].valueRelatedArtifact.type = #citation
+* extension[=].valueRelatedArtifact.label = "Kroenke 2001 — PHQ-9 severity validation"
+* extension[=].valueRelatedArtifact.citation = "Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. J Gen Intern Med 2001;16(9):606-13. doi:10.1046/j.1525-1497.2001.016009606.x"
+
+* extension[+].url = "http://hl7.org/fhir/StructureDefinition/cqf-relatedArtifact"
+* extension[=].valueRelatedArtifact.type = #derived-from
+* extension[=].valueRelatedArtifact.label = "MII PRO upstream OD (severity bands added downstream)"
+* extension[=].valueRelatedArtifact.display = "Derived from MII PRO mii-obsdef-pro-score-phq-9 (2026.3.0); adds clinical severity bands not present upstream."
 
 * category[+].coding[+] = $observation-category#survey
 

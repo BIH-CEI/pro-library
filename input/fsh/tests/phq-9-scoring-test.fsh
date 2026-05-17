@@ -12,7 +12,7 @@ Description: "Exercises PHQ-9 scoring CQL Library against boundary/extreme respo
 
 * id = "phq-9-scoring-test"
 * url = "https://fhir.bih-charite.de/pro-library/TestScript/phq-9-scoring-test"
-* version = "0.1.1"
+* version = "0.1.3"
 * name = "PHQ9ScoringTest"
 * title = "PHQ-9 Scoring Test (boundary/extreme cases)"
 * status = #active
